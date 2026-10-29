@@ -1,5 +1,5 @@
 // 离线缓存：先联网拿最新版，断网时用上次缓存的
-const C = 'qinghe-1.0.3';
+const C = 'qinghe-1.0.4';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   self.skipWaiting();
