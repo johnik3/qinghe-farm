@@ -1,5 +1,5 @@
 // 离线缓存：先联网拿最新版，断网时用上次缓存的
-const C = 'qinghe-1.0.1';
+const C = 'qinghe-1.0.2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -19,7 +19,9 @@ self.addEventListener('activate', e =>
   )
 );
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
+  const u = new URL(e.request.url);
+  if (e.request.method !== 'GET' || u.origin !== location.origin || u.pathname.endsWith('version.json'))
+    return;
   e.respondWith(
     fetch(e.request, { cache: 'no-cache' })
       .then(r => {
