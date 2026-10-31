@@ -1280,7 +1280,7 @@ body.calm .allbtn.has,body.calm .act.bump{animation:none}
 const $ = s => document.querySelector(s);
 const cv = $('#cv'),
   ctx = cv.getContext('2d');
-const VERSION = '1.4.1';
+const VERSION = '1.4.2';
 // 手机上连点按钮会被浏览器当成「双击放大」、双指捏也会放大整页：都拦掉（画面自己的缩放不受影响）
 document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
 for (const ev of ['gesturestart', 'gesturechange'])
@@ -3661,6 +3661,10 @@ function baseU() {
   return Math.min(cw / (WW + 0.3), 92);
 }
 function applyCam() {
+  // 画布还没排好版（宽或高为 0）时先不算镜头，否则镜头位置变成 NaN，之后一直画不出东西
+  if (!(cw > 0 && ch > 0)) return;
+  if (!isFinite(camX)) camX = WW / 2;
+  if (!isFinite(camY)) camY = -99;
   U = baseU() * zoom;
   const vw = cw / U,
     vh = ch / U;
@@ -6875,6 +6879,8 @@ function drawPlots() {
       // 作物用预先画好的小图，整株随风轻轻摆
       const sp = plantSprite(p.c, st, s),
         sw = Math.sin(T * 1.7 + i * 0.9) * 0.08;
+      // 小图拿不到时直接画矢量，保证作物总能显示
+      if (!sp) return drawPlant(p.c, cx, by, s, st, i);
       ctx.save();
       ctx.translate(cx, by);
       ctx.rotate(sw * 0.3);
@@ -7001,19 +7007,37 @@ function withPop(i, x, y, s, fn) {
 
 const plantCache = new Map();
 function plantSprite(id, st, s) {
-  const k = id + st + '|' + Math.round(s * dpr);
+  // 尺寸按 4 像素一档取整：双指缩放时不会每帧都新建一张小图，免得 iOS 画布内存爆掉后新图全是空白
+  const px = Math.max(4, Math.ceil((s * dpr) / 4) * 4),
+    k = id + '#' + st + '|' + px;
   let c = plantCache.get(k);
   if (c) return c;
-  if (plantCache.size > 160) plantCache.clear();
+  if (plantCache.size > 80) plantCache.clear();
   c = document.createElement('canvas');
-  c.width = Math.ceil(s * 1.6 * dpr);
-  c.height = Math.ceil(s * 1.75 * dpr);
+  c.width = Math.ceil(px * 1.6);
+  c.height = Math.ceil(px * 1.75);
   const g = c.getContext('2d');
+  if (!g) return null;
+  const ps = px / dpr;
   g.scale(dpr, dpr);
-  drawPlant(id, s * 0.8, s * 1.5, s, st, 0, g, true);
+  drawPlant(id, ps * 0.8, ps * 1.5, ps, st, 0, g, true);
   plantCache.set(k, c);
   return c;
 }
+// iOS Safari 切到后台后会回收离屏画布的内容，回来时缓存的小图变成空白（菜地里作物不见了）。
+// 回到前台、页面从缓存恢复、画布内容丢失时，把所有预画的图清掉重画。
+function dropCaches() {
+  plantCache.clear();
+  grassPats.length = 0;
+  glowCv = fogCv = beamCv = null;
+  if (cw > 0 && ch > 0) makeVignette();
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) dropCaches();
+});
+addEventListener('pageshow', dropCaches);
+addEventListener('focus', dropCaches);
+cv.addEventListener('contextrestored', dropCaches);
 
 /* 绘制动物与角色：鸡、牛、羊、乌鸦、猫、狗、商人 */
 function hungry(x, y, feed, i) {
