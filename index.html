@@ -1252,6 +1252,18 @@ body.calm .allbtn.has,body.calm .act.bump{animation:none}
 .btn.big.ghost:disabled{background:transparent;outline:1.5px dashed rgba(60,90,50,.25);outline-offset:-1.5px;border:0;color:var(--muted);box-shadow:none;opacity:1;font-weight:500}
 .meta b small.qs{font:500 12px var(--body);color:var(--muted);margin-left:4px;white-space:nowrap}
 .meta b small.qs .qt{margin:0 1px 0 4px}
+
+/* 1.4.3：工坊六个页签一行放下；小屏顶部区域切换不折行、提示少叠；横屏提示竖过来 */
+.wtabs:not(.dtabs) .wtab{flex:1;min-width:0;padding:6px 2px}
+.wtabs:not(.dtabs) .wtab span{white-space:nowrap;font-size:12.5px}
+#areas button{white-space:nowrap}
+@media (max-width:340px){#areas button{padding:5px 9px;font-size:13px}.t{font-size:13px;padding:6px 10px}}
+#rotTip{display:none}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){
+#rotTip{display:flex;position:fixed;inset:0;z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#2f4a32;color:#f4f7ec;font:400 20px var(--display);text-align:center;padding:20px}
+#rotTip svg{width:56px;height:56px;animation:rot 1.8s ease-in-out infinite}
+#rotTip small{font:400 14px var(--body);opacity:.75}}
+@keyframes rot{0%,30%{transform:rotate(-90deg)}60%,100%{transform:rotate(0)}}
 </style>
 
 <div id="app">
@@ -1261,7 +1273,7 @@ body.calm .allbtn.has,body.calm .act.bump{animation:none}
     <div class="clock"><div id="clock">第1天 06:00</div><small id="wx">晴</small></div>
     <button class="iconbtn" id="menuBtn" aria-label="菜单"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>
   </header>
-  <main id="stage"><canvas id="cv"></canvas><div id="toast" aria-live="polite"></div><div id="updbar" hidden role="button"><b>新</b><span id="updTxt"></span><button id="updClose" aria-label="关闭">×</button></div><div id="wxtip" hidden><span>在微信里存档容易丢，点右上角「···」选「在浏览器打开」再玩。</span><button id="wxClose" aria-label="关闭">×</button></div><div class="pills"><button class="today" id="todayBtn" aria-label="今日任务和签到"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="4.5" width="13" height="12" rx="2"/><path d="M3.5 8.5h13M7 3v3M13 3v3M7.5 12.5l1.8 1.8 3.5-3.6" stroke-linecap="round"/></svg><span id="todayTxt">今日 0/3</span><em id="todayDot" hidden></em></button><button class="today cpill" id="cPill" hidden><span id="cTxt">委托</span></button><button class="today fest" id="festBtn" hidden><span id="festTxt">节日</span><em id="festDot" hidden></em></button></div><div id="areas" hidden><button data-z="0">农场<em hidden></em></button><button data-z="1">南岸<em hidden></em></button><button data-z="2">茶山<em hidden></em></button></div><button class="allbtn" id="allBtn" hidden><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5h13l-1.4 7h-10.2z"/><path d="M6.5 9.5 9 4.5M13.5 9.5 11 4.5"/></svg><span id="allTxt">农场概览</span></button><div class="placebar" id="placebar" hidden><span id="placeTxt"></span><button class="btn gold" id="placeDone">完成</button></div></main>
+  <div id="rotTip" aria-live="polite"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><rect x="14" y="4" width="20" height="40" rx="4"/><path d="M21 38h6"/></svg>把手机竖过来玩<small>青禾小农场是竖屏游戏</small></div><main id="stage"><canvas id="cv"></canvas><div id="toast" aria-live="polite"></div><div id="updbar" hidden role="button"><b>新</b><span id="updTxt"></span><button id="updClose" aria-label="关闭">×</button></div><div id="wxtip" hidden><span>在微信里存档容易丢，点右上角「···」选「在浏览器打开」再玩。</span><button id="wxClose" aria-label="关闭">×</button></div><div class="pills"><button class="today" id="todayBtn" aria-label="今日任务和签到"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="4.5" width="13" height="12" rx="2"/><path d="M3.5 8.5h13M7 3v3M13 3v3M7.5 12.5l1.8 1.8 3.5-3.6" stroke-linecap="round"/></svg><span id="todayTxt">今日 0/3</span><em id="todayDot" hidden></em></button><button class="today cpill" id="cPill" hidden><span id="cTxt">委托</span></button><button class="today fest" id="festBtn" hidden><span id="festTxt">节日</span><em id="festDot" hidden></em></button></div><div id="areas" hidden><button data-z="0">农场<em hidden></em></button><button data-z="1">南岸<em hidden></em></button><button data-z="2">茶山<em hidden></em></button></div><button class="allbtn" id="allBtn" hidden><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5h13l-1.4 7h-10.2z"/><path d="M6.5 9.5 9 4.5M13.5 9.5 11 4.5"/></svg><span id="allTxt">农场概览</span></button><div class="placebar" id="placebar" hidden><span id="placeTxt"></span><button class="btn gold" id="placeDone">完成</button></div></main>
   <footer id="dock">
     <div class="acts">
       <button class="act" id="bOrders"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="4.5" y="3.5" width="11" height="14" rx="2"/><path d="M7.5 3.5v-1h5v1M7.5 8.5h5M7.5 11.5h5M7.5 14.5h3" stroke-linecap="round"/></svg><span>订单</span><span class="badge" id="obadge" hidden>0</span></button>
@@ -1280,7 +1292,7 @@ body.calm .allbtn.has,body.calm .act.bump{animation:none}
 const $ = s => document.querySelector(s);
 const cv = $('#cv'),
   ctx = cv.getContext('2d');
-const VERSION = '1.4.2';
+const VERSION = '1.4.3';
 // 手机上连点按钮会被浏览器当成「双击放大」、双指捏也会放大整页：都拦掉（画面自己的缩放不受影响）
 document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
 for (const ev of ['gesturestart', 'gesturechange'])
@@ -3860,7 +3872,8 @@ function toast(msg, cls = '') {
   el.textContent = msg;
   el.onclick = () => el.remove();
   box.appendChild(el);
-  while (box.children.length > 3) box.firstChild.remove();
+  // 小屏最多同时两条，免得盖住菜地
+  while (box.children.length > (innerWidth <= 360 ? 2 : 3)) box.firstChild.remove();
   setTimeout(() => el.remove(), cls === 'low' ? 1900 : cls ? 3400 : 2300);
 }
 const wetNow = () =>
@@ -4366,7 +4379,8 @@ function keepNeeds() {
     };
   S.orders.forEach(o => o.items.forEach(([k, q]) => add(k, q)));
   const qi = qInfo();
-  if (qi) for (const [k, n] of Object.entries(qi.Q.need)) add(k, n - (S.quest.given[k] || 0));
+  // 村庄复兴还没到等级解锁时不替它留货，不然新手的收成大多卖不掉
+  if (qi && !qi.lock) for (const [k, n] of Object.entries(qi.Q.need)) add(k, n - (S.quest.given[k] || 0));
   return need;
 }
 
